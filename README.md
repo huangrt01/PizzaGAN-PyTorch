@@ -5,10 +5,22 @@
 ## Datasets
 the datasets in on the [official page](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) of the author of PizzaGAN. Please save the [datasets](http://pizzagan.csail.mit.edu/pizzaGANsyntheticdata.zip) in ./datasets/ .
 
-## Train
+## PizzaGAN Train
+- To view training results and loss plots, run `python -m visdom.server` and click the URL http://localhost:8097.
+- Train
+```bash
 cd PizzaGAN-inofficial-incomplete
 
-python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model pizza_gan --gpu_ids 1,2 --batch_size 1 --wizard_batch_size 2 --dataset_mode pizza --epoch 1 --epoch_count 1 --serial_batch 
+python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model pizza_gan --gpu_ids 1,2 --batch_size 1 --wizard_batch_size 2 --dataset_mode pizza --epoch_count 0 --serial_batch 
+```
+- Continue training
+```bash
+cd PizzaGAN-inofficial-incomplete
+
+python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model pizza_gan --gpu_ids 1,2 --batch_size 1 --wizard_batch_size 2 --dataset_mode pizza --continue_train --epoch 20 --epoch_count 21 --serial_batch 
+```
+
+
 
 the training doesn't support multiple GPUs training because for every image the training procedure has slight differences.
 
