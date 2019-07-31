@@ -15,14 +15,12 @@ python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model
 ```
 - Continue training
 ```bash
-cd PizzaGAN-inofficial-incomplete
-
 python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model pizza_gan --gpu_ids 1,2 --batch_size 1 --wizard_batch_size 2 --dataset_mode pizza --continue_train --epoch 20 --epoch_count 21 --serial_batch 
 ```
 
 
 
-the training doesn't support multiple GPUs training because for every image the training procedure has slight differences.
+the training doesn't support multiple GPUs training because for every image the training procedure has subtle differences.
 
 ## results
 epoch 22 results
