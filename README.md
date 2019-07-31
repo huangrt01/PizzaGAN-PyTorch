@@ -1,7 +1,7 @@
 
 <br><br><br>
 
-# PizzaGAN-inofficial-incomplete in PyTorch
+# PizzaGAN-inofficial in PyTorch
 ## Datasets
 the datasets in on the [official page](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) of the author of PizzaGAN. Please save the [datasets](http://pizzagan.csail.mit.edu/pizzaGANsyntheticdata.zip) in ./datasets/ .
 
