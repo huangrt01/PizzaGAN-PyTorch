@@ -14,6 +14,8 @@ the training doesn't support multiple GPUs training because for every image the 
 
 ## results
 epoch 22 results
+
+I am uncertain about whether the model needs to be modified to generate the convincing results or it just needs more training to make the generator remove the toppings on the pizza thoroughly, hoping anyone who sees this program helps solve this problems.
 <img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img.jpg" width="800"/>
 <img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img4.jpg" width="800"/>
 
