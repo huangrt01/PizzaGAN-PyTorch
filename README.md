@@ -10,7 +10,7 @@ cd PizzaGAN-inofficial-incomplete
 
 python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model pizza_gan --gpu_ids 1,2 --batch_size 1 --wizard_batch_size 2 --dataset_mode pizza --epoch 1 --epoch_count 1 --serial_batch 
 
-the training doesn't support multiple GPUs training because for every image the train procedure has slight differences.
+the training doesn't support multiple GPUs training because for every image the training procedure has slight differences.
 
 
 ## Acknowledgments
