@@ -12,6 +12,12 @@ python train.py --dataroot ./datasets/syntheticDataset --name pizzapizza --model
 
 the training doesn't support multiple GPUs training because for every image the training procedure has slight differences.
 
+## results
+epoch 22 results
+<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img4.jpg" width="800"/>
+
+
 
 ## Acknowledgments
 code is based on [pytorch-CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
