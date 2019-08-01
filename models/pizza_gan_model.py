@@ -57,15 +57,14 @@ class PizzaGANModel(BaseModel):
         """
         BaseModel.__init__(self, opt)
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        self.loss_names = ['D_adv','D_cls', 'G_A','G_B', 'cycle_A','G_adv',
-                           'idt_A', 'idt_B','reg']
+        self.loss_names = ['D_adv','D_cls', 'G_A','G_B', 'cycle_A','G_adv','reg']
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         visual_names_A = ['real_A','A','mask_A', 'fake_B','B','mask_B', 'rec_A']
         #visual_names_B = ['real_B', 'fake_A', 'rec_B']
         # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
-        if self.isTrain and self.opt.lambda_identity > 0.0:
-            visual_names_A.append('idt_B')
-            #visual_names_B.append('idt_A')
+        # if self.isTrain and self.opt.lambda_identity > 0.0:
+        #     visual_names_A.append('idt_B')
+        #     #visual_names_B.append('idt_A')
 
         # combine visualizations for A and B
         self.visual_names = visual_names_A #+ visual_names_B
@@ -162,6 +161,7 @@ class PizzaGANModel(BaseModel):
 
     def forward(self,i,direction):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        """the direction argument is used to dertermine the direcrtion of the forward function, designed for the equilibrium of the two classes of the datasets"""
         if(direction):
             self.mask_A = self.netG_Amask[self.orders[i]](self.real_A)
             self.A = self.netG_A[self.orders[i]](self.real_A)
@@ -247,24 +247,26 @@ class PizzaGANModel(BaseModel):
 
     def backward_G(self,i,direction):
         """Calculate the loss for generators G_A and G_B"""
-        lambda_idt = self.opt.lambda_identity
+        #lambda_idt = self.opt.lambda_identity
         lambda_A = self.opt.lambda_A
         lambda_B = self.opt.lambda_B
         lambda_reg = 0.01
         # Identity loss
         if(direction):
-            if lambda_idt > 0:
-                # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
-                self.idt_A = self.netG_A[self.orders[i]](self.fake_B)
-                self.loss_idt_A = self.criterionIdt(
-                    self.idt_A, self.fake_B) * lambda_B * lambda_idt
-                # G_B should be identity if real_A is fed: ||G_B(A) - A||
-                self.idt_B = self.netG_B[self.orders[i]](self.real_A)
-                self.loss_idt_B = self.criterionIdt(
-                    self.idt_B, self.real_A) * lambda_A * lambda_idt
-            else:
-                self.loss_idt_A = 0
-                self.loss_idt_B = 0
+            #the idt loss needs to be removed"""
+
+            # if lambda_idt > 0:
+            #     # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
+            #     self.idt_A = self.netG_A[self.orders[i]](self.fake_B)
+            #     self.loss_idt_A = self.criterionIdt(
+            #         self.idt_A, self.fake_B) * lambda_B * lambda_idt
+            #     # G_B should be identity if real_A is fed: ||G_B(A) - A||
+            #     self.idt_B = self.netG_B[self.orders[i]](self.real_A)
+            #     self.loss_idt_B = self.criterionIdt(
+            #         self.idt_B, self.real_A) * lambda_A * lambda_idt
+            # else:
+            #     self.loss_idt_A = 0
+            #     self.loss_idt_B = 0
             self.loss_G_adv=self.criterionGAN_D(self.netDadv(self.fake_B),True)
             # GAN loss D_A(G_A(A))
             self.pred_fake = self.netD(self.fake_B)
@@ -278,23 +280,24 @@ class PizzaGANModel(BaseModel):
             # Backward cycle loss || G_A(G_B(B)) - B||
             #self.loss_cycle_B = self.criterionCycle(self.rec_B, self.real_B) * lambda_B
             self.criterionReg=torch.nn.MSELoss()
+            #
             self.loss_reg = (self.criterionReg(self.mask_A, torch.ones_like(self.mask_A))+self.criterionReg(self.mask_B, torch.ones_like(self.mask_B)))*0.5*lambda_reg
             # combined loss and calculate gradients
-            self.loss_G = self.loss_G_adv+self.loss_G_A + self.loss_cycle_A + self.loss_idt_A + self.loss_idt_B+self.loss_G_B
+            self.loss_G = self.loss_G_adv+self.loss_G_A + self.loss_cycle_A + self.loss_G_B
             self.loss_G.backward()
         else:
-            if lambda_idt > 0:
-                # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
-                self.idt_A = self.netG_B[self.orders_rev[i]](self.fake_B)
-                self.loss_idt_A = self.criterionIdt(
-                    self.idt_A, self.fake_B) * lambda_B * lambda_idt
-                # G_B should be identity if real_A is fed: ||G_B(A) - A||
-                self.idt_B = self.netG_A[self.orders_rev[i]](self.real_A)
-                self.loss_idt_B = self.criterionIdt(
-                    self.idt_B, self.real_A) * lambda_A * lambda_idt
-            else:
-                self.loss_idt_A = 0
-                self.loss_idt_B = 0
+            # if lambda_idt > 0:
+            #     # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
+            #     self.idt_A = self.netG_B[self.orders_rev[i]](self.fake_B)
+            #     self.loss_idt_A = self.criterionIdt(
+            #         self.idt_A, self.fake_B) * lambda_B * lambda_idt
+            #     # G_B should be identity if real_A is fed: ||G_B(A) - A||
+            #     self.idt_B = self.netG_A[self.orders_rev[i]](self.real_A)
+            #     self.loss_idt_B = self.criterionIdt(
+            #         self.idt_B, self.real_A) * lambda_A * lambda_idt
+            # else:
+            #     self.loss_idt_A = 0
+            #     self.loss_idt_B = 0
             self.loss_G_adv = self.criterionGAN_D(self.netDadv(self.fake_B), True)
             # GAN loss D_A(G_A(A))
             self.loss_G_A = self.criterionGAN_D(
@@ -313,8 +316,7 @@ class PizzaGANModel(BaseModel):
             self.loss_reg = -(self.criterionReg(self.mask_A, torch.ones_like(self.mask_A)) +
                               self.criterionReg(self.mask_B, torch.ones_like(self.mask_B)))*0.5*lambda_reg
             # combined loss and calculate gradients
-            self.loss_G = self.loss_G_adv+self.loss_G_A + self.loss_cycle_A + \
-                self.loss_idt_A + self.loss_idt_B+self.loss_G_B
+            self.loss_G = self.loss_G_adv+self.loss_G_A + self.loss_cycle_A +self.loss_G_B
             self.loss_G.backward()
 
     def optimize_parameters(self):
