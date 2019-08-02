@@ -363,10 +363,10 @@ class PizzaGANModel(BaseModel):
                 self.optimizer_D.zero_grad()   # set D_A and D_B's gradients to zero
                 self.backward_DX()      # calculate gradients for D_A
                 self.optimizer_D.step()  
-            self.current_label=self.labels[0]
-            self.current_order=self.orders
-            self.current_pred = np.concatenate((self.pred_real.detach().cpu().numpy().mean(
-                axis=2).mean(axis=2), self.pred_fake.detach().cpu().numpy().mean(axis=2).mean(axis=2)))
+        self.current_label=self.labels[0]
+        self.current_order=self.orders
+        self.current_pred = np.concatenate((self.pred_real.detach().cpu().numpy().mean(
+            axis=2).mean(axis=2), self.pred_fake.detach().cpu().numpy().mean(axis=2).mean(axis=2)))
 
 
 
