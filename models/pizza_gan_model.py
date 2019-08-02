@@ -57,7 +57,7 @@ class PizzaGANModel(BaseModel):
         """
         BaseModel.__init__(self, opt)
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        self.loss_names = ['D_adv','D_cls', 'G_A','G_B', 'cycle_A','G_adv','reg']
+        self.loss_names = ['D_adv','D_cls', 'G_A','G_B', 'cycle_A','G_adv','reg','idt']
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         visual_names_A = ['real_A','A','mask_A', 'fake_B','B','mask_B', 'rec_A']
         #visual_names_B = ['real_B', 'fake_A', 'rec_B']
@@ -249,12 +249,13 @@ class PizzaGANModel(BaseModel):
         """Calculate the loss for generators G_A and G_B"""
         #lambda_idt = self.opt.lambda_identity
         lambda_A = self.opt.lambda_A
-        lambda_B = self.opt.lambda_B
+        #lambda_B = self.opt.lambda_B
         lambda_reg = 0.01
+        lambda_idt=1
         # Identity loss
         if(direction):
-            #the idt loss needs to be removed"""
-
+            #the idt loss 
+            self.loss_idt=0
             # if lambda_idt > 0:
             #     # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
             #     self.idt_A = self.netG_A[self.orders[i]](self.fake_B)
@@ -267,6 +268,7 @@ class PizzaGANModel(BaseModel):
             # else:
             #     self.loss_idt_A = 0
             #     self.loss_idt_B = 0
+
             self.loss_G_adv=self.criterionGAN_D(self.netDadv(self.fake_B),True)
             # GAN loss D_A(G_A(A))
             self.pred_fake = self.netD(self.fake_B)
@@ -286,18 +288,13 @@ class PizzaGANModel(BaseModel):
             self.loss_G = self.loss_G_adv+self.loss_G_A + self.loss_cycle_A + self.loss_G_B
             self.loss_G.backward()
         else:
-            # if lambda_idt > 0:
-            #     # G_A should be identity if real_B is fed: ||G_A(B) - B||   使用fakeB代替
-            #     self.idt_A = self.netG_B[self.orders_rev[i]](self.fake_B)
-            #     self.loss_idt_A = self.criterionIdt(
-            #         self.idt_A, self.fake_B) * lambda_B * lambda_idt
-            #     # G_B should be identity if real_A is fed: ||G_B(A) - A||
-            #     self.idt_B = self.netG_A[self.orders_rev[i]](self.real_A)
-            #     self.loss_idt_B = self.criterionIdt(
-            #         self.idt_B, self.real_A) * lambda_A * lambda_idt
-            # else:
-            #     self.loss_idt_A = 0
-            #     self.loss_idt_B = 0
+            if lambda_idt > 0:
+                self.idt_B = self.netG_A[self.orders_rev[i]](self.real_A)
+                self.loss_idt = self.criterionIdt(
+                    self.idt_B, self.real_A) * lambda_A * lambda_idt
+            else:
+                self.loss_idt = 0
+
             self.loss_G_adv = self.criterionGAN_D(self.netDadv(self.fake_B), True)
             # GAN loss D_A(G_A(A))
             self.loss_G_A = self.criterionGAN_D(
