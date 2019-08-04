@@ -26,9 +26,10 @@ the training doesn't support multiple GPUs training because for every image the 
 the results are in /checkpoints/pizzapizza, using the HTML file to show the results of every epoch.
 
 epoch 11 results:
+<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch11.jpg" width="800"/>
 
-<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img.jpg" width="800"/>
-<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch22img4.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch11-1.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/huangrt01/PizzaGAN-inofficial-incomplete/master/imgs/epoch11-2.jpg" width="800"/>
 
 
 
